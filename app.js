@@ -56,6 +56,13 @@ class BugBountyChecker {
     ];
 
     this.checklist = [...this.defaultChecklist];
+    
+    // Initialize some default checked items
+    this.state.checkedItems = {
+      'auth-system': true,
+      'api-endpoints': true,
+      'file-upload': true
+    };
   }
 
   init() {
@@ -80,7 +87,9 @@ class BugBountyChecker {
     }
 
     // Reinitialize Lucide icons after rendering
-    lucide.createIcons();
+    if (window.lucide) {
+      lucide.createIcons();
+    }
   }
 
   renderInterestSelection() {
@@ -151,7 +160,9 @@ class BugBountyChecker {
 
   renderEvaluationChecklist() {
     const filteredChecklist = this.checklist.filter(item => 
-      this.state.selectedInterests.includes(item.category) || item.category === 'other'
+      this.state.selectedInterests.length === 0 || 
+      this.state.selectedInterests.includes(item.category) || 
+      item.category === 'other'
     );
 
     return `
@@ -173,65 +184,65 @@ class BugBountyChecker {
         ${this.state.selectedInterests.length === 0 ? `
           <div class="text-center py-8">
             <i data-lucide="alert-circle" class="w-16 h-16 text-yellow-400 mx-auto mb-4"></i>
-            <p class="text-gray-300">Please select your interests first to see relevant checklist items</p>
+            <p class="text-gray-300">Select your interests to filter checklist items, or check all that apply</p>
           </div>
-        ` : `
-          <div class="space-y-4">
-            ${filteredChecklist.map(item => `
-              <div id="checklist-item-${item.id}" class="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
-                <div class="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="checkbox-${item.id}"
-                    ${this.state.checkedItems[item.id] ? 'checked' : ''}
-                    class="w-5 h-5 text-cyan-400 rounded focus:ring-cyan-400 focus:ring-2"
-                  />
-                  <div class="flex-1">
-                    <p class="text-white font-medium">${item.text}</p>
-                    <div class="flex items-center gap-2 mt-1">
-                      <span class="px-2 py-1 rounded-full text-xs priority-${item.priority}">
-                        ${item.priority} priority
-                      </span>
-                      <span class="text-gray-400 text-xs">
-                        ${this.interests.find(i => i.id === item.category)?.name || 'General'}
-                      </span>
-                    </div>
+        ` : ''}
+
+        <div class="space-y-4">
+          ${filteredChecklist.map(item => `
+            <div id="checklist-item-${item.id}" class="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
+              <div class="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="checkbox-${item.id}"
+                  ${this.state.checkedItems[item.id] ? 'checked' : ''}
+                  class="w-5 h-5 text-cyan-400 rounded focus:ring-cyan-400 focus:ring-2"
+                />
+                <div class="flex-1">
+                  <p class="text-white font-medium">${item.text}</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="px-2 py-1 rounded-full text-xs priority-${item.priority}">
+                      ${item.priority} priority
+                    </span>
+                    <span class="text-gray-400 text-xs">
+                      ${this.interests.find(i => i.id === item.category)?.name || 'General'}
+                    </span>
                   </div>
                 </div>
-                ${this.state.editingChecklist && item.custom ? `
-                  <button
-                    id="remove-item-${item.id}"
-                    class="text-red-400 hover:text-red-300 p-2"
-                  >
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                  </button>
-                ` : ''}
               </div>
-            `).join('')}
+              ${this.state.editingChecklist ? `
+                <button
+                  id="remove-item-${item.id}"
+                  class="text-red-400 hover:text-red-300 p-2"
+                >
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              ` : ''}
+            </div>
+          `).join('')}
 
-            ${this.state.editingChecklist ? `
-              <div class="mt-6 p-4 bg-gray-700 rounded-lg">
-                <h3 class="text-white font-medium mb-3">Add Custom Checklist Item</h3>
-                <div class="flex gap-3">
-                  <input
-                    type="text"
-                    id="newChecklistItem"
-                    value="${this.state.newChecklistItem}"
-                    placeholder="Enter your custom checklist item..."
-                    class="flex-1 p-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
-                  />
-                  <button
-                    id="addChecklistItemBtn"
-                    class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
-                  >
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    Add
-                  </button>
-                </div>
+          ${this.state.editingChecklist ? `
+            <div class="mt-6 p-4 bg-gray-700 rounded-lg">
+              <h3 class="text-white font-medium mb-3">Add Custom Checklist Item</h3>
+              <div class="flex gap-3">
+                <input
+                  type="text"
+                  id="newChecklistItem"
+                  value="${this.state.newChecklistItem}"
+                  placeholder="Enter your custom checklist item..."
+                  class="flex-1 p-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none"
+                />
+                <button
+                  id="addChecklistItemBtn"
+                  class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                >
+                  <i data-lucide="plus" class="w-4 h-4"></i>
+                  Add
+                </button>
               </div>
-            ` : ''}
-          </div>
-        `}
+            </div>
+          ` : ''}
+        </div>
       </div>
     `;
   }
@@ -243,7 +254,7 @@ class BugBountyChecker {
         <button
           id="analyzeBtn"
           ${isDisabled ? 'disabled' : ''}
-          class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl animate-pulse"
+          class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-cyan-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           Analyze Target Fit
         </button>
@@ -434,13 +445,11 @@ class BugBountyChecker {
 
     // Remove checklist items
     this.checklist.forEach(item => {
-      if (item.custom) {
-        const removeBtn = document.getElementById(`remove-item-${item.id}`);
-        if (removeBtn) {
-          removeBtn.addEventListener('click', () => {
-            this.removeChecklistItem(item.id);
-          });
-        }
+      const removeBtn = document.getElementById(`remove-item-${item.id}`);
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+          this.removeChecklistItem(item.id);
+        });
       }
     });
 
