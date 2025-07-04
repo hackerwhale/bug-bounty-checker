@@ -20,11 +20,11 @@ A simple tool to help bug bounty hunters and ethical hackers quickly determine w
 ## 📦 How to Use
 
 1. Download or clone this repo.
-2. Open the `bug_bounty_target_checker.html` file in your browser.
+2. Open the url `https://hackerwhale.github.io/bug-bounty-checker/` file in your browser.
 3. Select your hacking interest.
 4. Enter the target domain.
 5. See if it matches your criteria. If not, the tool explains why.
 
-## 📁 Folder Structure
+
 
 
