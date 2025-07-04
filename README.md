@@ -1,6 +1,6 @@
 # 🔍 Bug Bounty Target Fit Checker
 
-A simple, offline tool to help bug bounty hunters and ethical hackers quickly determine whether a target aligns with their interests—such as API or Web-based vulnerabilities—based on a customizable checklist.
+A simple tool to help bug bounty hunters and ethical hackers quickly determine whether a target aligns with their interests—such as API or Web-based vulnerabilities—based on a customizable checklist.
 
 ## ✨ Features
 
